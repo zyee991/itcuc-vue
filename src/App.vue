@@ -1,28 +1,44 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Login v-if="!hasLogin" />
+    <Page v-if="hasLogin" :hasLogin="hasLogin" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Login from "./components/Login.vue";
+import Page from './components/Page.vue'
+import config from "./js/config.js";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
-    HelloWorld
-  }
-}
+    Page,
+    Login
+  },
+  data: function() {
+    return {
+      hasLogin: false
+    };
+  },
+  created: function() {
+    var token = localStorage.getItem("token");
+    if (!token) {
+      this.hasLogin = false;
+    } else {
+      this.hasLogin = true;
+    }
+  },
+  mounted:function() {
+      
+  },
+  methods: {
+    showLogin: function() {
+      this.hasLogin = false;
+    },
+    hideLogin: function() {
+      this.hasLogin = true;
+    }
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
