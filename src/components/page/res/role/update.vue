@@ -86,7 +86,7 @@
   </div>
 </template>
 <script>
-import config from "../../../js/config";
+import config from "../../../../js/config";
 
 export default {
   name: "role_update",
@@ -141,10 +141,8 @@ export default {
         .then(function(response) {
           var result = response.data;
           if (result.code == 0) {
-            var ret = confirm("保存成功");
-            if (ret) {
-              window.location.reload();
-            }
+            that.$parent.hideModal();
+            that.$parent.getMainData();
           } else {
             alert(result.msg);
           }
@@ -183,6 +181,7 @@ export default {
           var result = response.data;
           if (result.code == 0) {
             that.role = result.data;
+            that.getRelationResource(id);
           } else {
             alert(result.msg);
           }
@@ -192,6 +191,13 @@ export default {
         });
 
       // 获取已关联的角色列表
+      
+    },
+    getRelationResource:function(id) {
+      var role = this.role;
+      var url = config.remote_site + "/" + this.obj.url;
+      var that = this;
+      var token = localStorage.getItem("token");
       this.axios
         .get(config.remote_site + "/sso/permissionsByRoleId?roleId=" + id, {
           headers: { token: token }

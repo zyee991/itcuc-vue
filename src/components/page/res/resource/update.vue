@@ -18,97 +18,123 @@
         </div>
         <div class="modal-body">
           <form>
-            <input type="hidden" v-model="user.id" />
+            <input type="hidden" v-model="resource.id" />
             <div class="form-group">
-              <label for="username">用户名</label>
+              <label for="name">名称</label>
               <input
-                v-model="user.username"
+                v-model="resource.name"
                 required
                 type="text"
                 class="form-control"
                 id="username"
-                placeholder="请输入用户名"
-                readonly
+                placeholder="请输入名称"
               />
             </div>
             <div class="form-group">
-              <label for="password">密码</label>
+              <label for="shortName">简称</label>
               <input
-                v-model="user.password"
-                readonly
-                value="123456"
-                type="password"
+                v-model="resource.shortName"
+                type="text"
                 class="form-control"
-                id="password"
-                placeholder="请输入密码"
+                id="shortName"
+                placeholder="请输入简称"
               />
             </div>
             <div class="form-group">
-              <label for="email">邮箱</label>
+              <label for="url">地址</label>
               <input
-                v-model="user.email"
+                v-model="resource.url"
                 required
-                type="email"
+                type="text"
                 class="form-control"
-                id="email"
-                placeholder="请输入邮箱"
-                readonly
+                id="url"
+                placeholder="请输入地址"
               />
             </div>
             <div class="form-group">
-              <label for="phone">手机号</label>
+              <label for="group">组</label>
               <input
-                v-model="user.phone"
+                v-model="resource.group"
                 required
-                type="email"
+                type="text"
                 class="form-control"
-                id="phone"
-                placeholder="请输入手机号"
-                readonly
+                id="group"
+                placeholder="请输入组"
               />
             </div>
-            <div class="form-check form-check-inline" v-for="role in roles" :key="role.id">
+            <div class="form-group">
+              <label for="groupEn">组简称</label>
               <input
-                class="form-check-input"
-                type="checkbox"
-                id="inlineCheckbox1"
-                :value="role.id"
-                v-model="selectedRole"
-                disabled
+                v-model="resource.groupEn"
+                required
+                type="text"
+                class="form-control"
+                id="groupEn"
+                placeholder="请输入组简称"
               />
-              <label class="form-check-label" for="inlineCheckbox1">{{role.name}}</label>
+            </div>
+            <div class="form-group">
+              <label for="sort">排序标识</label>
+              <input
+                v-model="resource.sort"
+                required
+                type="number"
+                class="form-control"
+                id="sort"
+                placeholder="请输入排序标识"
+              />
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="close();">关闭</button>
+          <button type="button" class="btn btn-primary" @click="save();">保存</button>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import config from "../../../js/config";
+import config from "../../../../js/config";
 
 export default {
-  name: "user_view",
+  name: "resource_update",
   props: {
     obj: Object,
     recId: String
   },
   data: function() {
     return {
-      title: "查看用户",
-      user: {},
-      roles: [],
-      selectedRole: []
+      title: "编辑资源",
+      resource: {},
     };
   },
   methods: {
     close: function() {
       this.$parent.hideModal();
     },
-    getUserDetail: function(id) {
+    save: function() {
+      var resource = this.resource;
+      var url = config.remote_site + "/" + this.obj.url;
+      var that = this;
+      var token = localStorage.getItem("token");
+      // 保存
+      this.axios
+        .put(url, resource, { headers: { token: token } })
+        .then(function(response) {
+          var result = response.data;
+          if (result.code == 0) {
+            that.$parent.hideModal();
+            that.$parent.getMainData();
+          } else {
+            alert(result.msg);
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    getResourceDetail: function(id) {
       var url = config.remote_site + "/" + this.obj.url + "/" + id;
       var that = this;
       var token = localStorage.getItem("token");
@@ -117,7 +143,7 @@ export default {
         .then(function(response) {
           var result = response.data;
           if (result.code == 0) {
-            that.user = result.data;
+            that.resource = result.data;
           } else {
             alert(result.msg);
           }
@@ -125,48 +151,15 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
-
-      // 获取已关联的角色列表
-      this.axios
-        .get(config.remote_site + "/sso/rolesByUserId?userId=" + id, {
-          headers: { token: token }
-        })
-        .then(function(response) {
-          var result = response.data;
-          if (result.code == 0) {
-            that.selectedRole = result.data;
-          } else {
-            alert(result.msg);
-          }
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    }
+    },
   },
   mounted: function() {
-    this.getUserDetail(this.recId);
-    // 获取角色列表
-    var that = this;
-    var token = localStorage.getItem("token");
-    this.axios
-      .get(config.remote_site + "/sso/roles", { headers: { token: token } })
-      .then(function(response) {
-        var result = response.data;
-        if (result.code == 0) {
-          that.roles = result.data;
-        } else {
-          alert(result.msg);
-        }
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+    this.getResourceDetail(this.recId);
   },
   watch: {
     // 监控传入参数的变化
     recId: function(val) {
-      this.getUserDetail(val);
+      this.getResourceDetail(val);
     }
   }
 };

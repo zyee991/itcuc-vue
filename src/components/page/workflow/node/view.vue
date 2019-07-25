@@ -1,14 +1,14 @@
 <template>
   <!-- Modal -->
   <div
-    class="modal fade"
+    class="modal fade bd-example-modal-lg"
     id="exampleModal"
     tabindex="-1"
     role="dialog"
     aria-labelledby="exampleModalLabel"
     aria-hidden="true"
   >
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">{{title}}</h5>
@@ -18,75 +18,41 @@
         </div>
         <div class="modal-body">
           <form>
-            <input type="hidden" v-model="resource.id" />
+            <input type="hidden" v-model="node.id" />
             <div class="form-group">
               <label for="name">名称</label>
               <input
-                v-model="resource.name"
+                v-model="node.name"
                 required
                 type="text"
                 class="form-control"
-                id="username"
+                id="name"
                 placeholder="请输入名称"
                 readonly
               />
             </div>
             <div class="form-group">
-              <label for="shortName">简称</label>
+              <label for="workflowItemId">所属工作项</label>
               <input
-                v-model="resource.shortName"
-                type="text"
-                class="form-control"
-                id="shortName"
-                placeholder="请输入简称"
-                readonly
-              />
-            </div>
-            <div class="form-group">
-              <label for="url">地址</label>
-              <input
-                v-model="resource.url"
+                v-model="node.workflowItemName"
                 required
                 type="text"
                 class="form-control"
-                id="url"
-                placeholder="请输入地址"
-              />
-            </div>
-            <div class="form-group">
-              <label for="group">组</label>
-              <input
-                v-model="resource.group"
-                required
-                type="text"
-                class="form-control"
-                id="group"
-                placeholder="请输入组"
+                id="workflowItemId"
+                placeholder="请输入序号"
                 readonly
               />
             </div>
             <div class="form-group">
-              <label for="groupEn">组简称</label>
+              <label for="nodeNum">节点序号</label>
               <input
-                v-model="resource.groupEn"
-                required
-                type="text"
-                class="form-control"
-                id="groupEn"
-                placeholder="请输入组简称"
-                readonly
-              />
-            </div>
-            <div class="form-group">
-              <label for="sort">排序标识</label>
-              <input
-                readonly
-                v-model="resource.sort"
+                v-model="node.nodeNum"
                 required
                 type="number"
                 class="form-control"
-                id="sort"
-                placeholder="请输入排序标识"
+                id="nodeNum"
+                placeholder="请输入序号"
+                readonly
               />
             </div>
           </form>
@@ -99,25 +65,24 @@
   </div>
 </template>
 <script>
-import config from "../../../js/config";
+import config from "../../../../js/config";
 
 export default {
-  name: "resource_view",
+  name: "node_view",
   props: {
     obj: Object,
     recId: String
   },
   data: function() {
     return {
-      title: "查看资源",
-      resource: {},
+      title: "查看工作节点",
+      node: {},
     };
   },
   methods: {
     close: function() {
       this.$parent.hideModal();
     },
-    
     getResourceDetail: function(id) {
       var url = config.remote_site + "/" + this.obj.url + "/" + id;
       var that = this;
@@ -127,7 +92,7 @@ export default {
         .then(function(response) {
           var result = response.data;
           if (result.code == 0) {
-            that.resource = result.data;
+            that.node = result.data;
           } else {
             alert(result.msg);
           }
@@ -148,4 +113,3 @@ export default {
   }
 };
 </script>
-

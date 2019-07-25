@@ -12,20 +12,28 @@
       <div class="modal-body">
         <form>
           <div class="form-group">
-            <label for="username">用户名</label>
-            <input v-model="username" required type="text" class="form-control" id="username" placeholder="请输入用户名">
+            <label for="name">名称</label>
+            <input v-model="name" required type="text" class="form-control" id="name" placeholder="请输入名称">
           </div>
           <div class="form-group">
-            <label for="password">密码</label>
-            <input v-model="password" required type="password" class="form-control" id="password" placeholder="请输入密码">
+            <label for="shortName">简称</label>
+            <input v-model="shortName" required type="text" class="form-control" id="password" placeholder="请输入简称">
           </div>
           <div class="form-group">
-            <label for="email">邮箱</label>
-            <input v-model="email" required type="email" class="form-control" id="email"  placeholder="请输入邮箱">
+            <label for="url">地址</label>
+            <input v-model="url" required type="text" class="form-control" id="url" placeholder="请输入地址">
           </div>
           <div class="form-group">
-            <label for="phone">手机号</label>
-            <input v-model="phone" required type="email" class="form-control" id="phone"  placeholder="请输入手机号">
+            <label for="group">组</label>
+            <input v-model="group" required type="text" class="form-control" id="group" placeholder="请输入组">
+          </div>
+          <div class="form-group">
+            <label for="groupEn">组简称</label>
+            <input v-model="groupEn" required type="text" class="form-control" id="groupEn" placeholder="请输入组简称">
+          </div>
+          <div class="form-group">
+            <label for="sort">排序标识</label>
+            <input v-model="sort" required type="number" class="form-control" id="sort" placeholder="请输入排序标识">
           </div>
         </form>
       </div>
@@ -38,20 +46,22 @@
 </div>
 </template>
 <script>
-import config from "../../../js/config";
+import config from "../../../../js/config";
 
 export default {
-  name:"user_create",
+  name:"resource_create",
   props:{
     obj:Object,
   },
   data:function(){
     return {
-      title:"新建用户",
-      username:"",
-      password:"",
-      email:"",
-      phone:"",
+      title:"新建资源",
+      name:"",
+      shortName:"",
+      url:'',
+      group:'',
+      groupEn:'',
+      sort:'',
     }
   },
   methods:{
@@ -59,16 +69,20 @@ export default {
       this.$parent.hideModal();
     },
     save:function() {
-      var username = this.username;
-      var password = this.password;
-      var email = this.email;
-      var phone = this.phone;
+      var name = this.name;
+      var shortName = this.shortName;
+      var reUrl = this.url;
+      var group = this.group;
+      var groupEn = this.groupEn;
+      var sort = this.sort;
       var url = config.remote_site + "/" +this.obj.url;
       var params = {
-        username:username,
-        password:password,
-        email:email,
-        phone:phone
+        name:name,
+        shortName:shortName,
+        url:reUrl,
+        group:group,
+        groupEn:groupEn,
+        sort:sort,
       }
       var that = this;
       var token = localStorage.getItem("token");
@@ -77,10 +91,8 @@ export default {
         .then(function(response) {
           var result = response.data;
           if (result.code == 0) {
-            var ret = confirm("保存成功");
-            if(ret) {
-              window.location.reload();
-            }
+            that.$parent.hideModal();
+            that.$parent.getMainData();
           } else {
             alert(result.msg);
           }

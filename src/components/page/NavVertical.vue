@@ -1,4 +1,5 @@
 <template>
+<div class="row">
   <nav class="col-md-2 d-none d-md-block bg-light sidebar">
     <div class="sidebar-sticky">
       <ul class="nav flex-column">
@@ -12,43 +13,61 @@
       </ul>
     </div>
   </nav>
+  <component :is="comp" :resId='current'/>
+</div>
 </template>
 <script>
 export default {
   name: "NavVertical",
+  props:{
+    currentMenu:String,
+  },
   data: function(){
     return {
-      currentGroup:'',
       current:'',
-      resources:[]
+      resources:[],
+      comp:'res_main'
+    }
+  },
+  components:{
+    res_main:function(resolve) {
+      require(["./res/res_main.vue"], resolve);
+    },
+    workflow_main:function(resolve){
+      require(["./workflow/workflow_main.vue"], resolve);
     }
   },
   mounted:function(){
-    var currentGroup = localStorage.getItem("currentGroup");
-    var userinfo = localStorage.getItem("userinfo");
-    var userJson = JSON.parse(userinfo);
-    var allResources = userJson.resources;
-    var arr = new Array();
-    for(var i in allResources) {
-      if(allResources[i].groupEn == currentGroup) {
-        arr.push(allResources[i]);
-      }
-    }
-    this.resources = arr;
-    this.current = localStorage.getItem("currentResource");
-    if(!this.current) {
-      this.current = arr[0].id;
-    }
+    this.loadNavBar();
   },
   methods:{
     detail:function(id){
       this.current = id;
-      window.location.reload();
+    },
+    loadNavBar:function() {
+      this.comp = this.currentMenu+"_main";
+      var userinfo = localStorage.getItem("userinfo");
+      var userJson = JSON.parse(userinfo);
+      var allResources = userJson.sidebars;
+      var arr = new Array();
+      for(var i in allResources) {
+        if(allResources[i].parentId == this.currentMenu) {
+          arr.push(allResources[i]);
+        }
+      }
+      this.resources = arr;
+      this.current = localStorage.getItem("currentResource");
+      if(!this.current) {
+        this.current = arr[0].id;
+      }
     }
   },
   watch:{
     current:function(val){
       localStorage.setItem("currentResource",val);
+    },
+    currentMenu:function(val) {
+      this.loadNavBar();
     }
   }
 };

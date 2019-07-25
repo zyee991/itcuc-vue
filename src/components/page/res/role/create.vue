@@ -34,7 +34,7 @@
 </div>
 </template>
 <script>
-import config from "../../../js/config";
+import config from "../../../../js/config";
 
 export default {
   name:"role_create",
@@ -70,10 +70,8 @@ export default {
         .then(function(response) {
           var result = response.data;
           if (result.code == 0) {
-            var ret = confirm("保存成功");
-            if(ret) {
-              window.location.reload();
-            }
+            that.$parent.hideModal();
+            that.$parent.getMainData();
           } else {
             alert(result.msg);
           }

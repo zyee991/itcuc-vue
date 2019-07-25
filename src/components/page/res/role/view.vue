@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-import config from "../../../js/config";
+import config from "../../../../js/config";
 
 export default {
   name: "role_update",

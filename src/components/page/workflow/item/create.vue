@@ -16,24 +16,12 @@
             <input v-model="name" required type="text" class="form-control" id="name" placeholder="请输入名称">
           </div>
           <div class="form-group">
-            <label for="shortName">简称</label>
-            <input v-model="shortName" required type="text" class="form-control" id="password" placeholder="请输入简称">
+            <label for="workflowKey">标识</label>
+            <input v-model="workflowKey" required type="text" class="form-control" id="workflowKey" placeholder="请输入标识">
           </div>
           <div class="form-group">
-            <label for="url">地址</label>
-            <input v-model="url" required type="text" class="form-control" id="url" placeholder="请输入地址">
-          </div>
-          <div class="form-group">
-            <label for="group">组</label>
-            <input v-model="group" required type="text" class="form-control" id="group" placeholder="请输入组">
-          </div>
-          <div class="form-group">
-            <label for="groupEn">组简称</label>
-            <input v-model="groupEn" required type="text" class="form-control" id="groupEn" placeholder="请输入组简称">
-          </div>
-          <div class="form-group">
-            <label for="sort">排序标识</label>
-            <input v-model="sort" required type="number" class="form-control" id="sort" placeholder="请输入排序标识">
+            <label for="ownerGroup">业务组</label>
+            <input v-model="ownerGroup" required type="text" class="form-control" id="ownerGroup"  placeholder="请输入业务组">
           </div>
         </form>
       </div>
@@ -46,22 +34,19 @@
 </div>
 </template>
 <script>
-import config from "../../../js/config";
+import config from "../../../../js/config";
 
 export default {
-  name:"resource_create",
+  name:"item_create",
   props:{
     obj:Object,
   },
   data:function(){
     return {
-      title:"新建资源",
+      title:"新建工作项",
       name:"",
-      shortName:"",
-      url:'',
-      group:'',
-      groupEn:'',
-      sort:'',
+      workflowKey:"",
+      ownerGroup:"",
     }
   },
   methods:{
@@ -70,19 +55,13 @@ export default {
     },
     save:function() {
       var name = this.name;
-      var shortName = this.shortName;
-      var reUrl = this.url;
-      var group = this.group;
-      var groupEn = this.groupEn;
-      var sort = this.sort;
+      var workflowKey = this.workflowKey;
+      var ownerGroup = this.ownerGroup;
       var url = config.remote_site + "/" +this.obj.url;
       var params = {
         name:name,
-        shortName:shortName,
-        url:reUrl,
-        group:group,
-        groupEn:groupEn,
-        sort:sort,
+        workflowKey:workflowKey,
+        ownerGroup:ownerGroup,
       }
       var that = this;
       var token = localStorage.getItem("token");
@@ -91,10 +70,8 @@ export default {
         .then(function(response) {
           var result = response.data;
           if (result.code == 0) {
-            var ret = confirm("保存成功");
-            if(ret) {
-              window.location.reload();
-            }
+            that.$parent.hideModal();
+            that.$parent.getMainData();
           } else {
             alert(result.msg);
           }
