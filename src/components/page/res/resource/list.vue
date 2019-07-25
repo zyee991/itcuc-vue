@@ -65,8 +65,8 @@
             <th>群组</th>
             <th>群组简称</th>
             <th>排序标识</th>
-            <th>创建时间</th>
-            <th>更新时间</th>
+            <!-- <th>创建时间</th> -->
+            <!-- <th>更新时间</th> -->
             <th v-if="crOperate">操作</th>
           </tr>
         </thead>
@@ -78,8 +78,8 @@
             <td>{{row.group}}</td>
             <td>{{row.groupEn}}</td>
             <td>{{row.sort}}</td>
-            <td>{{row.created}}</td>
-            <td>{{row.updated}}</td>
+            <!-- <td>{{row.created}}</td> -->
+            <!-- <td>{{row.updated}}</td> -->
             <td v-if="crOperate">
               <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                 <button type="button" v-if="crRead" class="btn btn-success" @click="view(row.id)">查看</button>
